@@ -1,0 +1,6 @@
+## Copyright (C) 2026 - 2026 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+version=4
+opts=filenamemangle=s/.+\/v?(\d\S+)\.tar\.gz/virtualbox-guest-additions-iso-$1\.tar\.gz/ \
+  https://github.com/Kicksecure/virtualbox-guest-additions-iso/tags .*/v?(\d\S+)\.tar\.gz
