@@ -1,3 +1,9 @@
+virtualbox-guest-additions-iso (1:7.2.10.1-1) unstable; urgency=medium
+
+  * New upstream version (local package).
+
+ -- Patrick Schleizer <adrelanos@whonix.org>  Tue, 07 Jul 2026 13:47:20 +0000
+
 virtualbox-guest-additions-iso (1:7.2.10-1) unstable; urgency=medium
 
   * New upstream version (local package).

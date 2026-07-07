@@ -1,3 +1,70 @@
+commit 8a0d4511557469e197eb0edb19e6d0b723390c5b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 7 09:13:27 2026 -0400
+
+    .
+
+commit 31afccb1d5e04b523d92191e79e1e73f30d308e4
+Merge: 28d1a24 7b15d0f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 7 09:12:54 2026 -0400
+
+    Merge remote-tracking branch 'org-ai-assisted/claude/vbox-gai-iso-checksum-verify'
+
+commit 7b15d0fa05d3dce7463894042759b82d8942a2fa
+Author: claude (dev58 638ee7fe-ed4a-4ff7-bf34-5e07f0a9b5d1) <noreply@anthropic.com>
+Date:   Tue Jul 7 08:26:15 2026 -0400
+
+    Verify ISO on the dpkg-buildpackage path too, via a shared script
+
+    The build-time check previously lived only in make_dist_hook_pre, so it
+    gated genmkfile's 'dist' path but not a plain 'dpkg-buildpackage -b'.
+
+    Factor the verification into debian/verify-iso-checksums (self-contained,
+    fail closed, cd's to the package root itself) and call it from BOTH:
+    - debian/make-helper-overrides.bsh (make_dist_hook_pre), and
+    - debian/rules (override_dh_auto_build),
+    so every build route re-verifies the ISO against the committed upstream
+    SHA256SUMS + MD5SUMS, with no duplicated logic.
+
+    Verified: genmkfile dist, 'debian/rules build', and a direct run all pass;
+    a tampered checksum line fails closed on every path.
+
+    Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+
+commit 8d368223ba6848636f9e53f0a52bb26b1155705a
+Author: claude (dev58 638ee7fe-ed4a-4ff7-bf34-5e07f0a9b5d1) <noreply@anthropic.com>
+Date:   Tue Jul 7 08:02:06 2026 -0400
+
+    Verify Guest Additions ISO against upstream checksums at build time
+
+    Pin the prebuilt VBoxGuestAdditions.iso to Oracle's published sums and
+    verify it during the build, so the binary committed to git is no longer
+    an unverifiable supply-chain blob.
+
+    - add usr/share/virtualbox/SHA256SUMS + MD5SUMS (verbatim upstream, from
+      https://download.virtualbox.org/virtualbox/7.2.10/).
+    - debian/make-helper-overrides.bsh: make_dist_hook_pre verifies the
+      shipped ISO against both sums before it is packed into the source
+      tarball / .deb, fail closed. It extracts the expected hash from the
+      VBoxGuestAdditions_<version>.iso line and compares it to the actual
+      (unversioned) shipped VBoxGuestAdditions.iso, because a name-mismatched
+      'sha256sum --check --ignore-missing' would verify nothing (exit 0).
+    - set version_numbers_by_upstream=true so genmkfile keeps the upstream
+      version string instead of mangling 7.2.10 into 8.0.0.
+    - debian/changelog: drop the bogus 1:7.3.0-1 entry. The committed ISO is
+      7.2.10 (volume id VBOXADDITIONS_7.2.10_174163) and 7.3.0 GA does not
+      exist upstream; only the developers repo ever carried it.
+
+    Changelog-manual-ok: remove bogus 1:7.3.0-1 entry that never shipped to users; the ISO is 7.2.10, not a genmkfile version bump
+    Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+
+commit 28d1a244e64faa911ed85735edbb157a42763a91
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 7 11:05:05 2026 +0000
+
+    bumped changelog version
+
 commit 0944df7e5721fcdf32a174579bb984e968c9a740
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Jul 7 07:05:03 2026 -0400
