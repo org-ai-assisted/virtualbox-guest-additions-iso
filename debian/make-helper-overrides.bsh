@@ -3,4 +3,74 @@
 ## Copyright (C) 2026 - 2026 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+## Sourced by genmkfile's make-helper-one.bsh. The 'die' / 'make_output_info'
+## helpers are provided by the caller. The strict-mode block below is
+## idempotent with the caller's (this file is sourced into an already-strict
+## shell); it is kept to satisfy the shared bash-style gate (R-010).
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+shopt -s inherit_errexit
+shopt -s shift_verbose
+
 genmkfile_lintian_post_opts+=" --suppress-tags initial-upload-closes-no-bugs"
+
+## The VirtualBox Guest Additions ISO is a prebuilt upstream binary (this
+## package is not built from source). Its upstream version string
+## (e.g. 7.2.10) is set by dm-virtualbox-guest-additions-iso-update from the
+## ISO itself, so keep it verbatim: genmkfile's generic
+## version-bump-calculate would otherwise mangle e.g. 7.2.10 into 8.0.0.
+version_numbers_by_upstream="true"
+
+## Verify one checksum flavor of the shipped ISO against the upstream-published
+## sums file.
+##
+## Upstream lists the ISO under its VERSIONED name
+## (VBoxGuestAdditions_<version>.iso), while this package ships it unversioned
+## (VBoxGuestAdditions.iso). core.symlinks=false rules out bridging the two
+## names with an in-repo symlink, and 'sha256sum --check --ignore-missing'
+## would silently verify NOTHING on that name mismatch (exit 0). So pull the
+## expected hash out of the single matching line and compare it against the
+## actual shipped file. Fail closed on a missing file, a missing/duplicate
+## line, or a hash mismatch.
+verify_vbox_guest_additions_iso_checksum() {
+   local tool sums_file iso_file expected_hash actual_hash
+   local -a matched_lines
+
+   tool="$1"
+   sums_file="$2"
+   iso_file="$3"
+
+   test -f "${sums_file}" || die 1 "${FUNCNAME[0]}: checksum file missing: '${sums_file}'"
+   test -f "${iso_file}"  || die 1 "${FUNCNAME[0]}: ISO file missing: '${iso_file}'"
+
+   mapfile -t matched_lines < <(grep -E ' \*?VBoxGuestAdditions_[^ ]+\.iso$' -- "${sums_file}" || true)
+   [ "${#matched_lines[@]}" = "1" ] || die 1 \
+      "${FUNCNAME[0]}: expected exactly one 'VBoxGuestAdditions_*.iso' line in '${sums_file}', found '${#matched_lines[@]}'."
+
+   expected_hash="${matched_lines[0]%% *}"
+   [ -n "${expected_hash}" ] || die 1 "${FUNCNAME[0]}: could not parse expected hash from '${sums_file}'."
+
+   actual_hash="$("${tool}" -- "${iso_file}")"
+   actual_hash="${actual_hash%% *}"
+
+   [ "${expected_hash}" = "${actual_hash}" ] || die 1 \
+      "${FUNCNAME[0]}: ${tool} MISMATCH for '${iso_file}': expected '${expected_hash}' (per '${sums_file}'), got '${actual_hash}'."
+
+   make_output_info "${FUNCNAME[0]}: OK ${tool} '${iso_file}' matches '${sums_file}' (${expected_hash})."
+}
+
+## genmkfile pre-hook for the 'dist' target: verify the ISO against BOTH the
+## SHA256 and the MD5 upstream sums before it is packed into the source tarball
+## / .deb.
+make_dist_hook_pre() {
+   local iso_dir
+   iso_dir="usr/share/virtualbox"
+
+   verify_vbox_guest_additions_iso_checksum \
+      "sha256sum" "${iso_dir}/SHA256SUMS" "${iso_dir}/VBoxGuestAdditions.iso"
+   verify_vbox_guest_additions_iso_checksum \
+      "md5sum" "${iso_dir}/MD5SUMS" "${iso_dir}/VBoxGuestAdditions.iso"
+}
