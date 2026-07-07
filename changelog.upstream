@@ -1,3 +1,21 @@
+commit 0944df7e5721fcdf32a174579bb984e968c9a740
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 7 07:05:03 2026 -0400
+
+    add debian install file (generated using "genmkfile debinstfile")
+
+commit 487b9588999b0e381efb61fc228ed91758bf72e0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 7 07:03:23 2026 -0400
+
+    signed commit
+
+commit 908244d36fec0550cae8e502d299593e5521b998
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sun Jun 28 20:06:19 2026 -0400
+
+    changelog.upstream
+
 commit 5c1f6f97e78d9b84cb34280cff287c5c46907b3f
 Author: Aaron Rainbolt <arraybolt3@gmail.com>
 Date:   Sun Jun 28 20:05:38 2026 -0400
