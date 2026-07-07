@@ -7,3 +7,10 @@
 
 %:
 	dh $@
+
+## Verify the prebuilt ISO against the committed upstream checksums on every
+## build, including a plain 'dpkg-buildpackage' that does not go through
+## genmkfile's dist hook. Same check as debian/make-helper-overrides.bsh.
+override_dh_auto_build:
+	debian/verify-iso-checksums
+	dh_auto_build
