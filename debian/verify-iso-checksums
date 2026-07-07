@@ -17,7 +17,7 @@ set -o errtrace
 shopt -s inherit_errexit
 shopt -s shift_verbose
 
-die() {
+exit_with_error() {
    printf '%s\n' "$0: ERROR: $*" >&2
    exit 1
 }
@@ -46,20 +46,20 @@ verify_one() {
    tool="$1"
    sums_file="$2"
 
-   test -f "${sums_file}" || die "checksum file missing: '${sums_file}'"
-   test -f "${iso_file}"  || die "ISO file missing: '${iso_file}'"
+   test -f "${sums_file}" || exit_with_error "checksum file missing: '${sums_file}'"
+   test -f "${iso_file}"  || exit_with_error "ISO file missing: '${iso_file}'"
 
    mapfile -t matched_lines < <(grep -E ' \*?VBoxGuestAdditions_[^ ]+\.iso$' -- "${sums_file}" || true)
-   [ "${#matched_lines[@]}" = "1" ] || die \
+   [ "${#matched_lines[@]}" = "1" ] || exit_with_error \
       "expected exactly one 'VBoxGuestAdditions_*.iso' line in '${sums_file}', found '${#matched_lines[@]}'."
 
    expected_hash="${matched_lines[0]%% *}"
-   [ -n "${expected_hash}" ] || die "could not parse expected hash from '${sums_file}'."
+   [ -n "${expected_hash}" ] || exit_with_error "could not parse expected hash from '${sums_file}'."
 
    actual_hash="$("${tool}" -- "${iso_file}")"
    actual_hash="${actual_hash%% *}"
 
-   [ "${expected_hash}" = "${actual_hash}" ] || die \
+   [ "${expected_hash}" = "${actual_hash}" ] || exit_with_error \
       "${tool} MISMATCH for '${iso_file}': expected '${expected_hash}' (per '${sums_file}'), got '${actual_hash}'."
 
    printf '%s\n' "$0: OK ${tool} '${iso_file}' matches '${sums_file}' (${expected_hash})."
