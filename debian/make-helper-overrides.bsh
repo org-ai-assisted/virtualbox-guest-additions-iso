@@ -3,4 +3,30 @@
 ## Copyright (C) 2026 - 2026 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+## Sourced by genmkfile's make-helper-one.bsh. The strict-mode block below is
+## idempotent with the caller's (this file is sourced into an already-strict
+## shell); it is kept to satisfy the shared bash-style gate (R-010).
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+shopt -s inherit_errexit
+shopt -s shift_verbose
+
 genmkfile_lintian_post_opts+=" --suppress-tags initial-upload-closes-no-bugs"
+
+## The VirtualBox Guest Additions ISO is a prebuilt upstream binary (this
+## package is not built from source). Its upstream version string
+## (e.g. 7.2.10) is set by dm-virtualbox-guest-additions-iso-update from the
+## ISO itself, so keep it verbatim: genmkfile's generic
+## version-bump-calculate would otherwise mangle e.g. 7.2.10 into 8.0.0.
+version_numbers_by_upstream="true"
+
+## genmkfile pre-hook for the 'dist' target: verify the ISO against the
+## committed upstream SHA256SUMS + MD5SUMS before it is packed into the source
+## tarball. Shares the exact check with debian/rules (which covers the plain
+## 'dpkg-buildpackage' path) via debian/verify-iso-checksums.
+make_dist_hook_pre() {
+   ./debian/verify-iso-checksums
+}
