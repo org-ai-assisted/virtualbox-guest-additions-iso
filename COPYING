@@ -3,9 +3,6 @@ Upstream-Name: VirtualBox Guest Additions iso image
 Upstream-Contact: Oracle Corporation
                   https://www.oracle.com/
 Source: https://www.virtualbox.org/
-Comment: This package has no real reason to be in non-free other than that it
- is not built from source, and it is in non-free in Debian for historical
- reasons.
 
 Files: *
 Copyright: 2004-2026, Oracle Corporation
