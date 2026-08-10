@@ -2,7 +2,7 @@
 ## See the file COPYING for copying conditions.
 
 Source: virtualbox-guest-additions-iso
-Section: non-free/misc
+Section: misc
 Priority: optional
 Maintainer: Patrick Schleizer <adrelanos@kicksecure.com>
 Build-Depends: debhelper-compat (= 13)
