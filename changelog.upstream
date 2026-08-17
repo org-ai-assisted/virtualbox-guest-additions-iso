@@ -1,3 +1,22 @@
+commit 8c1a776d63d125a9ab524d668166c790cded0c8f
+Merge: 0a8f1e0 46cee54
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Aug 10 09:41:28 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/ArrayBolt3/arraybolt3/trixie'
+
+commit 46cee54fe39688427960005d7429e5903cbcb32b
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sun Aug 2 11:45:17 2026 -0400
+
+    Move Guest Additions out of non-free, it is freedom software
+
+commit 0a8f1e0d2f22ffb42a83218873ae03c3eccf99c3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 12 17:45:59 2026 +0000
+
+    bumped changelog version
+
 commit e000cbf053faea3bdab380bde4333ecfd5c44c14
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Jul 12 13:05:07 2026 -0400
